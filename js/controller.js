@@ -27,8 +27,9 @@ app.controller('InController', function ($rootScope, $scope, $state, $timeout, $
                 organSegNumber: $scope.data.orgNum,
                 transferNumber: $scope.data.oddNum
             };
+             console.log(data);
 
-            HttpService.get("/transferInfo", data,
+            HttpService.get("/transferInfo1", data,
                 function (suc) {
                     if (suc) {
                         Config.baseInfo = suc;
@@ -41,7 +42,7 @@ app.controller('InController', function ($rootScope, $scope, $state, $timeout, $
                         }
                     }
                 }, function (fail) {
-
+                    console.log(fail)
                 })
         }
 

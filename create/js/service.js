@@ -1,6 +1,6 @@
 // var host = "http://139.196.212.47/transbox/api";
-//var host = "http://www.lifeperfusor.com/transbox/api";
-var host = "http://192.168.31.231:1337/transbox/api";
+var host = "http://www.lifeperfusor.com/transbox/api";
+//var host = "http://127.0.0.1:1337/transbox/api";
 app.factory("HttpService", function ($http, $rootScope) {
 
     return {
@@ -25,7 +25,7 @@ app.factory("HttpService", function ($http, $rootScope) {
                 }
 
             }, function (error) {
-                var err = "很抱歉，无法从服务器获取数据。";
+                var err = "很抱歉，无法从服务器获取数据。。";
                 mui.toast(err);
                 failureCallBack(error);
             });
@@ -51,7 +51,7 @@ app.factory("HttpService", function ($http, $rootScope) {
                 }
 
             }, function (error) {
-                var err = "很抱歉，无法从服务器获取数据。";
+                var err = "很抱歉，无法从服务器获取数据。。";
                 mui.toast(err);
                 failureCallBack(error);
             });
