@@ -155,7 +155,7 @@ app.controller('InController', function ($rootScope, $scope, $state, $timeout, $
                     if (temp.humidity) {
 
 
-                        dataX.push(temp.recordAt1);
+                        dataX.push(moment(temp.recordAt).format('MM-DD HH:mm'));
                         dataY.push(temp.humidity);
                     }
                 }
@@ -176,20 +176,19 @@ app.controller('InController', function ($rootScope, $scope, $state, $timeout, $
             var temperature = [];
             var unTemperature = 0;
             var temperatureTotal = 0;
-            var tDataX = [];
-            var tDataY = [];
+
             for (var j = 0; j < $scope.info.records.length; j++) {
                 var item = $scope.info.records[j];
                 // if (item.temperature && item.avgTemperature) {
                 if(item.temperature<0||item.temperature>6){
-                    tDataX.push(item.recordAt1);
+                    tDataX.push(moment(item.recordAt).format('MM-DD HH:mm'));
                     tDataY.push(item.temperature);
                     unTemperature++;
                     temperatureTotal++;
                 }else if(item.temperature&&j%sizeInt==0)
                 {
 
-                    tDataX.push(item.recordAt1);
+                    tDataX.push(moment(item.recordAt).format('MM-DD HH:mm'));
                     tDataY.push(item.temperature);
                     temperatureTotal++;
                     //tData.push({y: item.recordAt, x: item.temperature,lineColor: "red", markerType: "circle" })
@@ -397,7 +396,7 @@ app.controller('InController', function ($rootScope, $scope, $state, $timeout, $
                     if (temp.humidity) {
 
 
-                        dataX.push(temp.recordAt1);
+                        dataX.push(moment(temp.recordAt).format('MM-DD HH:mm'));
                         dataY.push(temp.humidity);
                     }
                 }
@@ -413,8 +412,7 @@ app.controller('InController', function ($rootScope, $scope, $state, $timeout, $
             // }
 
             // 温度
-            var tDataX = [];
-            var tDataY = [];
+
             var temperature = [];
             var unTemperature = 0;
             var temperatureTotal = 0;
@@ -424,14 +422,14 @@ app.controller('InController', function ($rootScope, $scope, $state, $timeout, $
                 var item = $scope.info.records[j];
                 // if (item.temperature && item.avgTemperature) {
                 if(item.temperature<0||item.temperature>6){
-                    tDataX.push(item.recordAt1);
+                    tDataX.push(moment(item.recordAt).format('MM-DD HH:mm'));
                     tDataY.push(item.temperature);
                     unTemperature++;
                     temperatureTotal++;
                 }else if(item.temperature&&j%sizeInt==0)
                 {
 
-                    tDataX.push(item.recordAt1);
+                    tDataX.push(moment(item.recordAt).format('MM-DD HH:mm'));
                     tDataY.push(item.temperature);
                     temperatureTotal++;
                     //tData.push({y: item.recordAt, x: item.temperature,lineColor: "red", markerType: "circle" })
