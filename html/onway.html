@@ -681,11 +681,11 @@
                     }
                 }
                 var temratureTotal = scope1.temperatureTotal;
-                var tickIntervalSize = 13;
+                var tickIntervalSize = 16;
                 if (temratureTotal < 40) {
-                    tickIntervalSize = 13;
+                    tickIntervalSize = 16;
                 } else {
-                    tickIntervalSize = parseInt(temratureTotal *13/40);
+                    tickIntervalSize = parseInt(temratureTotal *16/40);
                 }
 
                 parseInt(temratureTotal / 40);
@@ -736,7 +736,7 @@
                         text: '湿度监控显示（%）'                //指定图表标题
                     },
                     xAxis: {
-                        tickInterval: 13,
+                        tickInterval: 16,
                         categories: scope1.dataX //指定x轴分组
                     },
                     yAxis: {
