@@ -313,7 +313,7 @@
                                                     map: mapObj,
                                                     position: new AMap.LngLat(item.longitude, item.latitude),//基点位置
                                                     //  title: item.temperature,
-                                                    icon: "http://127.0.0.1:8080/transbox/images/temperature.png"
+                                                    icon: "http://116.62.28.28:8080/transbox/images/temperature.png"
                                                 });
                                                 //鼠标点击marker弹出自定义的信息窗体
                                                 markerT.on('click', function (e) {
@@ -331,7 +331,7 @@
                                                         map: mapObj,
                                                         position: new AMap.LngLat(item.longitude, item.latitude),//基点位置
                                                         //  title: item.temperature,
-                                                        icon: "http://127.0.0.1:8080/transbox/images/collision.png"
+                                                        icon: "http://116.62.28.28:8080/transbox/images/collision.png"
                                                     });
                                                     //鼠标点击marker弹出自定义的信息窗体
                                                     markerC.on('click', function (e) {
@@ -349,7 +349,7 @@
                                                         map: mapObj,
                                                         position: new AMap.LngLat(item.longitude, item.latitude),//基点位置
                                                         //  title: item.temperature,
-                                                        icon: "http://127.0.0.1:8080/transbox/images/open.png"
+                                                        icon: "http://116.62.28.28:8080/transbox/images/open.png"
                                                     });
                                                     //鼠标点击marker弹出自定义的信息窗体
                                                     markerO.on('click', function (e) {
@@ -441,7 +441,7 @@
 
                     <div class="onway-morris-content">
 
-                        <div line-chart style="background-color: #FFFFFF;width: 100%;height: 400px;"
+                        <div line-chart style="background-color: #FFFFFF;height: calc(100% - 70px);width: inherit"
                              id="temperature"></div>
                     </div>
                 </div>
@@ -473,101 +473,19 @@
 
                     <div class="onway-morris-content">
 
-                        <div line-chart style="background-color: #FFFFFF;width: 100%;height: 400px;"
+                        <div line-chart style="background-color: #FFFFFF;height: calc(100% - 70px);width: inherit;"
                              id="humidity"></div>
                     </div>
                 </div>
 
             </div>
-            <script>
-                var scope1 = angular.element($("#temperature")).scope();
 
-                var test = [];
-                if (scope1.tDataY) {
-                    for (var i = 0; i < scope1.tDataY.length; i++) {
-                        test.push(scope1.tDataY[i] / 1.0);
-                    }
-                }
-                var temratureTotal = scope1.temperatureTotal;
-                var tickIntervalSize = 8;
-                if (temratureTotal < 40) {
-                    tickIntervalSize = 8;
-                } else {
-                    tickIntervalSize = parseInt(temratureTotal / 5);
-                }
-
-                parseInt(temratureTotal / 40);
-                var chart = new Highcharts.Chart('temperature', {
-                    chart: {
-                        type: 'line'                         //指定图表的类型，默认是折线图（line）
-                    },
-                    title: {
-                        text: '温度监控显示（℃）'                //指定图表标题
-                    },
-                    xAxis: {
-                        tickInterval: tickIntervalSize,
-                        categories: scope1.tDataX //指定x轴分组
-                    },
-                    yAxis: {
-                        title: {
-                            text: '温度'                //指定y轴的标题
-                        },
-                        tickPositions: [-6, 0, 6, 12, 18] // 指定竖轴坐标点的值
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    series: [{                              //指定数据列
-                        name: '温度',                       //数据列名
-                        data: test,                  //数据
-                        zones: [{
-                            value: 0.0,
-                            color: '#ff0000'
-                        }, {
-                            value: 6.0,
-                            color: '#379DF2'
-                        }, {
-                            color: "#ff0000"
-                        }]
-                    }]
-                });
-                var test1 = [];
-                if (scope1.dataY) {
-                    for (var i = 0; i < scope1.dataY.length; i++) {
-                        test1.push(scope1.dataY[i] / 1.0);
-                    }
-                }
-                var chart = new Highcharts.Chart('humidity', {
-                    chart: {
-                        type: 'line'                         //指定图表的类型，默认是折线图（line）
-                    },
-                    title: {
-                        text: '湿度监控显示（%）'                //指定图表标题
-                    },
-                    xAxis: {
-                        tickInterval: 8,
-                        categories: scope1.dataX //指定x轴分组
-                    },
-                    yAxis: {
-                        title: {
-                            text: '湿度'                //指定y轴的标题
-                        }
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    series: [{                              //指定数据列
-                        name: '湿度',                       //数据列名
-                        data: test1
-                    }]
-                });
-            </script>
             <div class="section">
                  <div style="padding: 10% 5%">
 
                          <div class="onway-morris-content" style="background-color: #FFFFFF">
 
-                             <div id="press" style="width: 100%">
+                             <div id="press" style="height: calc(100% - 70px);width: inherit">
                              </div>
                          </div>
                  </div>
@@ -575,9 +493,9 @@
             <div class="section">
                 <div style="padding: 10% 5%">
 
-                         <div class="onway-morris-content" style="background-color: #FFFFFF;margin-top: 20px;">
+                         <div class="onway-morris-content" style="background-color: #FFFFFF;">
 
-                             <div id="flow" style="width: 100%">
+                             <div id="flow" style="height: calc(100% - 70px);width: inherit">
 
                              </div>
                          </div>
@@ -585,9 +503,9 @@
             </div>
             <div class="section">
                 <div style="padding: 10% 5%">
-                         <div class="onway-morris-content" style="background-color: #FFFFFF;margin-top: 20px;">
+                         <div class="onway-morris-content" style="background-color: #FFFFFF">
 
-                             <div id="organization" style="width: 100%">
+                             <div id="organization" style="height: calc(100% - 70px);width: inherit">
 
                              </div>
                          </div>
@@ -623,7 +541,7 @@
                                      text: '压力监控显示（mm）'                //指定图表标题
                                  },
                                  xAxis: {
-                                     tickInterval: 5,
+                                     tickInterval: 8,
                                      categories: dataX//指定x轴分组
                                  },
                                  yAxis: {
@@ -658,7 +576,7 @@
                                      text: '流速监控显示（cm/s）'                //指定图表标题
                                  },
                                  xAxis: {
-                                     tickInterval: 5,
+                                     tickInterval: 8,
                                      categories: dataFlowX//指定x轴分组
                                  },
                                  yAxis: {
@@ -693,7 +611,7 @@
                                      text: '组织力监控显示（N）'                //指定图表标题
                                  },
                                  xAxis: {
-                                     tickInterval: 5,
+                                     tickInterval: 8,
                                      categories: dataOrgX//指定x轴分组
                                  },
                                  yAxis: {
@@ -753,6 +671,88 @@
 
                 </div>
             </div>
+            <script>
+                var scope1 = angular.element($("#temperature")).scope();
+
+                var test = [];
+                if (scope1.tDataY) {
+                    for (var i = 0; i < scope1.tDataY.length; i++) {
+                        test.push(scope1.tDataY[i] / 1.0);
+                    }
+                }
+                var temratureTotal = scope1.temperatureTotal;
+                var tickIntervalSize = 13;
+                if (temratureTotal < 40) {
+                    tickIntervalSize = 13;
+                } else {
+                    tickIntervalSize = parseInt(temratureTotal *13/40);
+                }
+
+                parseInt(temratureTotal / 40);
+                var chart = new Highcharts.Chart('temperature', {
+                    chart: {
+                        type: 'line'                         //指定图表的类型，默认是折线图（line）
+                    },
+                    title: {
+                        text: '温度监控显示（℃）'                //指定图表标题
+                    },
+                    xAxis: {
+                        tickInterval: tickIntervalSize,
+                        categories: scope1.tDataX //指定x轴分组
+                    },
+                    yAxis: {
+                        title: {
+                            text: '温度'                //指定y轴的标题
+                        }
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    series: [{                              //指定数据列
+                        name: '温度',                       //数据列名
+                        data: test,                  //数据
+                        zones: [{
+                            value: 0.0,
+                            color: '#ff0000'
+                        }, {
+                            value: 6.0,
+                            color: '#379DF2'
+                        }, {
+                            color: "#ff0000"
+                        }]
+                    }]
+                });
+                var test1 = [];
+                if (scope1.dataY) {
+                    for (var i = 0; i < scope1.dataY.length; i++) {
+                        test1.push(scope1.dataY[i] / 1.0);
+                    }
+                }
+                var chart = new Highcharts.Chart('humidity', {
+                    chart: {
+                        type: 'line'                         //指定图表的类型，默认是折线图（line）
+                    },
+                    title: {
+                        text: '湿度监控显示（%）'                //指定图表标题
+                    },
+                    xAxis: {
+                        tickInterval: 13,
+                        categories: scope1.dataX //指定x轴分组
+                    },
+                    yAxis: {
+                        title: {
+                            text: '湿度'                //指定y轴的标题
+                        }
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    series: [{                              //指定数据列
+                        name: '湿度',                       //数据列名
+                        data: test1
+                    }]
+                });
+            </script>
         </div>
 
     </div>
