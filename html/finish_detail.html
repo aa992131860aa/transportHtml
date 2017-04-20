@@ -186,6 +186,230 @@
                 </div>
             </div>
             <div class="section">
+                <!--page4-->
+
+                <div style="padding: 10% 5%;height: 100%">
+
+                    <div>
+                        <span class="way-span-weight">当前位置:
+                            <span class="color-blue"
+                                  ng-bind="info.records[info.records.length-1].currentCity"></span>
+                        </span>
+                        <span class="way-span-weight-float">剩余距离:
+                            <span class="color-blue"
+                                  ng-bind="info.records[info.records.length-1].distance"></span>
+                        </span>
+                    </div>
+
+                    <div id="map" style="height: calc(100% - 70px);width: inherit"></div>
+
+                    <script type="text/javascript">
+                        var mapObj;
+                        var recordData;
+
+                        var scope = angular.element($("#map")).scope();
+                        var data = scope.info;
+
+                        if (data) {
+                            recordData = data.records;
+
+                            if (recordData.length > 0) {
+
+                                function mapInit() {
+                                    for (var i = 0; i < recordData.length; i++) {
+                                        var item = recordData[i];
+                                        if (item.longitude && item.latitude) {
+                                            mapObj = new AMap.Map('map', {
+                                                dragEnable: false,
+                                                zoomEnable: false,
+                                                zoom: 10,
+                                                center: [item.longitude, item.latitude]
+                                            });
+
+                                            AMap.event.addListener(mapObj, "complete", completeEventHandler);
+
+                                            return;
+                                        }
+                                    }
+
+                                }
+
+                                mapInit();
+                                //在指定位置打开信息窗体
+                                function openInfoCollision(map, e, data) {
+                                    //构建信息窗体中显示的内容
+                                    var info = [];
+
+                                    info.push("<div style=\"padding:0px 0px 0px 8px;\"><b>碰撞异常</b>");
+                                    info.push("<div style=\";color:#ff0000;\">" + data + "");
+                                    infoWindow = new AMap.InfoWindow({
+                                        content: info.join("<br/>")  //使用默认信息窗体框样式，显示信息内容
+                                    });
+                                    infoWindow.open(map, e.target.getPosition());
+                                }
+
+                                //在指定位置打开信息窗体
+                                function openInfoOpenData(map, e, data) {
+                                    //构建信息窗体中显示的内容
+                                    var info = [];
+
+                                    info.push("<div style=\"padding:0px 0px 0px 4px;\"><b>开箱异常</b>");
+                                    info.push("时间:<div style=\";color:#ff0000;\"><b>" + data + "</b>");
+                                    infoWindow = new AMap.InfoWindow({
+                                        content: info.join("<br/>")  //使用默认信息窗体框样式，显示信息内容
+                                    });
+                                    infoWindow.open(map, e.target.getPosition());
+                                }
+
+                                //在指定位置打开信息窗体
+                                function openInfoTemperature(map, e, data, time) {
+                                    //构建信息窗体中显示的内容
+                                    var info = [];
+
+                                    info.push("<div style=\"padding:0px 0px 0px 4px;\"><b>温度异常</b>");
+                                    info.push("温度:<span style=\"color:#ff0000;\"><b>" + data + "℃</b></span>");
+                                    info.push("时间:<sapn style=\"color:#ff0000;\"><b>" + time + "</b></sapn>");
+                                    infoWindow = new AMap.InfoWindow({
+                                        content: info.join("<br/>")  //使用默认信息窗体框样式，显示信息内容
+                                    });
+                                    infoWindow.open(map, e.target.getPosition());
+                                }
+
+                                function completeEventHandler() {
+                                    lineArr = new Array();
+                                    //碰撞
+                                    var collisionData = scope.data.collisionData;
+                                    var openData = scope.data.openData;
+                                    for (var i = 0; i < recordData.length; i++) {
+                                        var item = recordData[i];
+                                        if (item.longitude && item.latitude) {
+
+                                            //alert(item.longitude+","+item.latitude);
+                                            //开始标志
+                                            if (i == 0) {
+                                                marker = new AMap.Marker({
+                                                    map: mapObj,
+                                                    position: new AMap.LngLat(item.longitude, item.latitude),//基点位置
+                                                    //  title: item.temperature,
+                                                    icon: "http://webapi.amap.com/theme/v1.3/markers/n/start.png"
+                                                });
+
+                                            }
+
+                                            //结束标志
+                                            if (i == recordData.length - 1) {
+                                                marker = new AMap.Marker({
+                                                    map: mapObj,
+                                                    position: new AMap.LngLat(item.longitude, item.latitude),//基点位置
+                                                    //  title: item.temperature,
+                                                    icon: "http://webapi.amap.com/theme/v1.3/markers/n/end.png"
+                                                });
+                                            }
+
+                                            //异常温度
+                                            if (item.temperature < 0 || item.temperature > 6) {
+                                                // console.log("t:"+item.temperature);
+                                                markerT = new AMap.Marker({
+                                                    map: mapObj,
+                                                    position: new AMap.LngLat(item.longitude, item.latitude),//基点位置
+                                                    //  title: item.temperature,
+                                                    icon: "http://127.0.0.1:8080/transbox/images/temperature.png"
+                                                });
+                                                //鼠标点击marker弹出自定义的信息窗体
+                                                markerT.on('click', function (e) {
+                                                    openInfoTemperature(mapObj, e, item.temperature, item.recordAt);
+
+
+                                                });
+                                            }
+                                            //碰撞
+                                            for (var d = 0; d < collisionData.length; d++) {
+                                                //console.log("c:"+collisionData[d]);
+                                                // console.log("r:"+item.recordAt);
+                                                if (collisionData[d] == item.recordAt) {
+                                                    markerC = new AMap.Marker({
+                                                        map: mapObj,
+                                                        position: new AMap.LngLat(item.longitude, item.latitude),//基点位置
+                                                        //  title: item.temperature,
+                                                        icon: "http://127.0.0.1:8080/transbox/images/collision.png"
+                                                    });
+                                                    //鼠标点击marker弹出自定义的信息窗体
+                                                    markerC.on('click', function (e) {
+                                                        openInfoCollision(mapObj, e, item.recordAt);
+                                                    });
+                                                    break;
+                                                }
+                                            }
+                                            //开箱
+                                            for (var m = 0; m < openData.length; m++) {
+                                                //console.log("c:"+collisionData[d]);
+                                                // console.log("r:"+item.recordAt);
+                                                if (openData[m] == item.recordAt) {
+                                                    markerO = new AMap.Marker({
+                                                        map: mapObj,
+                                                        position: new AMap.LngLat(item.longitude, item.latitude),//基点位置
+                                                        //  title: item.temperature,
+                                                        icon: "http://127.0.0.1:8080/transbox/images/open.png"
+                                                    });
+                                                    //鼠标点击marker弹出自定义的信息窗体
+                                                    markerO.on('click', function (e) {
+                                                        openInfoOpenData(mapObj, e, item.recordAt);
+                                                    });
+                                                    break;
+                                                }
+                                            }
+                                            lineArr.push(new AMap.LngLat(item.longitude, item.latitude));
+
+                                        }
+                                    }
+
+
+                                    var polyline = new AMap.Polyline({
+                                        map: mapObj,
+                                        panel: "panel",
+                                        path: lineArr,
+                                        strokeColor: '#00FF00',   // 线颜色
+                                        strokeOpacity: 0.7,         // 线透明度
+                                        strokeWeight: 6,          // 线宽
+                                        strokeStyle: 'solid',     // 线样式
+                                        strokeDasharray: [10, 5], // 补充线样式
+                                        geodesic: true,            // 绘制大地线
+                                        isOutline: true,
+                                        outlineColor: "#ff8511",
+                                        showDir: true,
+                                        lineJoin: 'round'
+                                    });
+                                    mapObj.setFitView();
+
+                                }
+
+                            } else {
+
+
+                                var map = new AMap.Map('map', {
+                                    resizeEnable: true,
+                                    dragEnable: false,
+                                    zoomEnable: false,
+                                    zoom: 11,
+                                    center: [120.373091, 30.304104]
+                                });
+                            }
+                        } else {
+                            var map = new AMap.Map('map', {
+                                resizeEnable: true,
+                                dragEnable: false,
+                                zoomEnable: false,
+                                zoom: 11,
+                                center: [120.373091, 30.304104]
+                            });
+                        }
+
+                    </script>
+
+                </div>
+
+            </div>
+            <div class="section">
 
                 <!--page2 温度-->
 
@@ -216,16 +440,9 @@
                     </div>
 
                     <div class="onway-morris-content">
-                        <div class="ms-title">温度监控显示（℃）</div>
-                        <div
-                                line-chart
-                                line-data='lineData'
-                                line-xkey='y'
-                                line-ykeys='["a"]'
-                                line-labels='["当前"]'
-                                line-colors='colors'
-                                line-date-format="initDate">
-                        </div>
+
+                        <div line-chart style="background-color: #FFFFFF;width: 100%;height: 400px;"
+                             id="temperature"></div>
                     </div>
                 </div>
 
@@ -255,102 +472,250 @@
                     </div>
 
                     <div class="onway-morris-content">
-                        <div class="ms-title">湿度监控显示（%）</div>
-                        <div
-                                line-chart
-                                line-data='lineModerationData'
-                                line-xkey='y'
-                                line-ykeys='["a"]'
-                                line-labels='["当前(%)"]'
-                                line-colors='colors'
-                                line-date-format="initDate">
-                        </div>
+
+                        <div line-chart style="background-color: #FFFFFF;width: 100%;height: 400px;"
+                             id="humidity"></div>
                     </div>
                 </div>
 
             </div>
-            <div class="section">
-                <!--page4-->
+            <script>
+                var scope1 = angular.element($("#temperature")).scope();
 
-                <div style="padding: 10% 5%;height: 100%">
+                var test = [];
+                if (scope1.tDataY) {
+                    for (var i = 0; i < scope1.tDataY.length; i++) {
+                        test.push(scope1.tDataY[i] / 1.0);
+                    }
+                }
+                var temratureTotal = scope1.temperatureTotal;
+                var tickIntervalSize = 8;
+                if (temratureTotal < 40) {
+                    tickIntervalSize = 8;
+                } else {
+                    tickIntervalSize = parseInt(temratureTotal / 5);
+                }
 
-                    <div>
-                        <span class="way-span-weight">当前位置:
-                            <span class="color-blue"
-                                  ng-bind="info.records[info.records.length-1].currentCity"></span>
-                        </span>
-                        <span class="way-span-weight-float">剩余距离:
-                            <span class="color-blue"
-                                  ng-bind="info.records[info.records.length-1].distance"></span>
-                        </span>
-                    </div>
-
-                    <div id="map" style="height: calc(100% - 70px);width: inherit"></div>
-
-                    <script type="text/javascript">
-                        var mapObj;
-                        var recordData;
-
-                        var scope = angular.element($("#map")).scope();
-                        var data = scope.info;
-                        if (data) {
-                            recordData = data.records;
-
-                            if (recordData.length > 0) {
-
-                                function mapInit() {
-                                    for (var i = 0; i < recordData.length; i++) {
-                                        var item = recordData[i];
-                                        if (item.longitude && item.latitude) {
-                                            mapObj = new AMap.Map('map', {
-                                                dragEnable: false,
-                                                zoomEnable: false,
-                                                zoom: 10,
-                                                center: [item.longitude, item.latitude]
-                                            });
-                                            AMap.event.addListener(mapObj, "complete", completeEventHandler);
-
-                                            return;
-                                        }
-                                    }
-                                }
-
-                                mapInit();
-
-                                function completeEventHandler() {
-                                    lineArr = new Array();
-
-                                    for (var i = 0; i < recordData.length; i++) {
-                                        var item = recordData[i];
-                                        if (item.longitude && item.latitude) {
-                                            lineArr.push(new AMap.LngLat(item.longitude, item.latitude));
-
-                                            marker = new AMap.Marker({
-                                                map: mapObj,
-                                                position: new AMap.LngLat(item.longitude, item.latitude),//基点位置
-                                                title: item.temperature
-                                            });
-                                        }
-                                    }
-
-                                    var polyline = new AMap.Polyline({
-                                        map: mapObj,
-                                        path: lineArr,
-                                        strokeColor: "#379DF2",//线颜色
-                                        strokeOpacity: 1,//线透明度
-                                        strokeWeight: 3,//线宽
-                                        strokeStyle: "solid"//线样式
-                                    });
-                                    mapObj.setFitView();
-
-                                }
-
-                            }
+                parseInt(temratureTotal / 40);
+                var chart = new Highcharts.Chart('temperature', {
+                    chart: {
+                        type: 'line'                         //指定图表的类型，默认是折线图（line）
+                    },
+                    title: {
+                        text: '温度监控显示（℃）'                //指定图表标题
+                    },
+                    xAxis: {
+                        tickInterval: tickIntervalSize,
+                        categories: scope1.tDataX //指定x轴分组
+                    },
+                    yAxis: {
+                        title: {
+                            text: '温度'                //指定y轴的标题
+                        },
+                        tickPositions: [-6, 0, 6, 12, 18] // 指定竖轴坐标点的值
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    series: [{                              //指定数据列
+                        name: '温度',                       //数据列名
+                        data: test,                  //数据
+                        zones: [{
+                            value: 0.0,
+                            color: '#ff0000'
+                        }, {
+                            value: 6.0,
+                            color: '#379DF2'
+                        }, {
+                            color: "#ff0000"
+                        }]
+                    }]
+                });
+                var test1 = [];
+                if (scope1.dataY) {
+                    for (var i = 0; i < scope1.dataY.length; i++) {
+                        test1.push(scope1.dataY[i] / 1.0);
+                    }
+                }
+                var chart = new Highcharts.Chart('humidity', {
+                    chart: {
+                        type: 'line'                         //指定图表的类型，默认是折线图（line）
+                    },
+                    title: {
+                        text: '湿度监控显示（%）'                //指定图表标题
+                    },
+                    xAxis: {
+                        tickInterval: 8,
+                        categories: scope1.dataX //指定x轴分组
+                    },
+                    yAxis: {
+                        title: {
+                            text: '湿度'                //指定y轴的标题
                         }
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    series: [{                              //指定数据列
+                        name: '湿度',                       //数据列名
+                        data: test1
+                    }]
+                });
+            </script>
+            <div class="section">
+                 <div style="padding: 10% 5%">
 
-                    </script>
+                         <div class="onway-morris-content" style="background-color: #FFFFFF">
 
+                             <div id="press" style="width: 100%">
+                             </div>
+                         </div>
+                 </div>
+            </div>
+            <div class="section">
+                <div style="padding: 10% 5%">
+
+                         <div class="onway-morris-content" style="background-color: #FFFFFF;margin-top: 20px;">
+
+                             <div id="flow" style="width: 100%">
+
+                             </div>
+                         </div>
                 </div>
+            </div>
+            <div class="section">
+                <div style="padding: 10% 5%">
+                         <div class="onway-morris-content" style="background-color: #FFFFFF;margin-top: 20px;">
+
+                             <div id="organization" style="width: 100%">
+
+                             </div>
+                         </div>
+                         <script>
+                             //                        var scope1 = angular.element($("#temperature")).scope();
+                             //
+                             //                        var test = [];
+                             //                        if (scope1.tDataY) {
+                             //                            for (var i = 0; i < scope1.tDataY.length; i++) {
+                             //                                test.push(scope1.tDataY[i] / 1.0);
+                             //                            }
+                             //                        }
+                             //                        var temratureTotal = scope1.temperatureTotal;
+                             //                        var tickIntervalSize = 8;
+                             //                        if (temratureTotal < 40) {
+                             //                            tickIntervalSize = 8;
+                             //                        } else {
+                             //                            tickIntervalSize = parseInt(temratureTotal / 5);
+                             //                        }
+                             //
+                             //                        parseInt(temratureTotal / 40);
+                             var dataX = ['04-07 13:20', '04-07 14:20', '04-07 15:20', '04-07 16:20', '04-07 17:20', '04-07 18:20'
+                                 , '04-07 19:20', '04-07 20:20', '04-07 21:20', '04-07 22:20', '04-07 23:20'
+                                 , '04-07 23:20', '04-07 23:20', '04-08 01:20', '04-08 02:20', '04-08 03:20'
+                                 , '04-08 04:20', '04-08 05:20', '04-08 06:20', '04-08 07:20', '04-08 08:20'
+                                 , '04-08 09:20', '04-08 10:20', '04-08 11:20',];
+                             var dataY = [15, 20, 12, 8, 30, 13, 26, 10, 24, 19, 18, 22, 31, 10, 20, 20, 20, 21, 19, 29, 12, 14, 18, 13,];
+                             var chart = new Highcharts.Chart('press', {
+                                 chart: {
+                                     type: 'line'                         //指定图表的类型，默认是折线图（line）
+                                 },
+                                 title: {
+                                     text: '压力监控显示（mm）'                //指定图表标题
+                                 },
+                                 xAxis: {
+                                     tickInterval: 5,
+                                     categories: dataX//指定x轴分组
+                                 },
+                                 yAxis: {
+                                     title: {
+                                         text: '压力'                //指定y轴的标题
+                                     }
+                                 },
+                                 credits: {
+                                     enabled: false
+                                 },
+                                 series: [{                              //指定数据列
+                                     name: '压力',                       //数据列名
+                                     data: dataY,                  //数据
+                                     zones: [{
+                                         value: -100,
+                                         color: '#379DF2'
+                                     }]
+                                 }]
+                             });
+
+                             var dataFlowX = ['04-07 13:20', '04-07 14:20', '04-07 15:20', '04-07 16:20', '04-07 17:20', '04-07 18:20'
+                                 , '04-07 19:20', '04-07 20:20', '04-07 21:20', '04-07 22:20', '04-07 23:20'
+                                 , '04-07 23:20', '04-07 23:20', '04-08 01:20', '04-08 02:20', '04-08 03:20'
+                                 , '04-08 04:20', '04-08 05:20', '04-08 06:20', '04-08 07:20', '04-08 08:20'
+                                 , '04-08 09:20', '04-08 10:20', '04-08 11:20',];
+                             var dataFlowY = [2, 3, 5, 6, 8, 9, 10, 10, 13, 12, 12, 15, 17, 18, 20, 20, 20, 21, 19, 22, 21, 23, 24, 15,];
+                             var chart = new Highcharts.Chart('flow', {
+                                 chart: {
+                                     type: 'line'                         //指定图表的类型，默认是折线图（line）
+                                 },
+                                 title: {
+                                     text: '流速监控显示（cm/s）'                //指定图表标题
+                                 },
+                                 xAxis: {
+                                     tickInterval: 5,
+                                     categories: dataFlowX//指定x轴分组
+                                 },
+                                 yAxis: {
+                                     title: {
+                                         text: '流速'                //指定y轴的标题
+                                     }
+                                 },
+                                 credits: {
+                                     enabled: false
+                                 },
+                                 series: [{                              //指定数据列
+                                     name: '流速',                       //数据列名
+                                     data: dataFlowY,                  //数据
+                                     zones: [{
+                                         value: -100,
+                                         color: '#379DF2'
+                                     }]
+                                 }]
+                             });
+
+                             var dataOrgX = ['04-07 13:20', '04-07 14:20', '04-07 15:20', '04-07 16:20', '04-07 17:20', '04-07 18:20'
+                                 , '04-07 19:20', '04-07 20:20', '04-07 21:20', '04-07 22:20', '04-07 23:20'
+                                 , '04-07 23:20', '04-07 23:20', '04-08 01:20', '04-08 02:20', '04-08 03:20'
+                                 , '04-08 04:20', '04-08 05:20', '04-08 06:20', '04-08 07:20', '04-08 08:20'
+                                 , '04-08 09:20', '04-08 10:20', '04-08 11:20',];
+                             var dataOrgY = [15, 14, 12, 14, 13, 13, 12, 10, 13, 15, 16, 16, 17, 14, 13, 15, 14, 16, 14, 16, 14, 17, 18, 13,];
+                             var chart = new Highcharts.Chart('organization', {
+                                 chart: {
+                                     type: 'line'                         //指定图表的类型，默认是折线图（line）
+                                 },
+                                 title: {
+                                     text: '组织力监控显示（N）'                //指定图表标题
+                                 },
+                                 xAxis: {
+                                     tickInterval: 5,
+                                     categories: dataOrgX//指定x轴分组
+                                 },
+                                 yAxis: {
+                                     title: {
+                                         text: '组织力'                //指定y轴的标题
+                                     }
+                                 },
+                                 credits: {
+                                     enabled: false
+                                 },
+                                 series: [{                              //指定数据列
+                                     name: '组织力',                       //数据列名
+                                     data: dataOrgY,                  //数据
+                                     zones: [{
+                                         value: -100,
+                                         color: '#379DF2'
+                                     }]
+                                 }]
+                             });
+
+                         </script>
+                     </div>
 
             </div>
             <div class="section">

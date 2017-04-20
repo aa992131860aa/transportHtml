@@ -62,6 +62,7 @@ app.controller('InController', function ($rootScope, $scope, $state, $timeout, $
             collisionData: [],
             crashData: []   //总的crash 数据
         };
+
         // morris
         $scope.info = {};
         $scope.lineModerationData = [];
@@ -136,37 +137,79 @@ app.controller('InController', function ($rootScope, $scope, $state, $timeout, $
 
             $scope.getCrashInfo();
 
-            // 湿度
-            var data = [];
+            var count  = $scope.info.records.length;
+            var lineSize = 40;
+            var sizeInt =1;
             var humidity = [];
-            for (var i = 0; i < $scope.info.records.length; i++) {
-                var temp = $scope.info.records[i];
-                if (temp.humidity) {
-                    humidity.push(parseInt(temp.humidity));
-                    data.push({
-                        y: temp.recordAt,
-                        a: temp.humidity
-                    })
-                }
+            var dataX = [];
+            var dataY = [];
+            if(count<=lineSize){
+
+            }else{
+                sizeInt = parseInt(count/lineSize)
             }
-            $scope.lineModerationData = data;
+
+            for (var i = 0; i < $scope.info.records.length; i++) {
+                if(i%sizeInt==0) {
+                    var temp = $scope.info.records[i];
+                    if (temp.humidity) {
+
+
+                        dataX.push(temp.recordAt1);
+                        dataY.push(temp.humidity);
+                    }
+                }
+                humidity.push(parseInt(temp.humidity));
+            }
+            $scope.dataX = dataX;
+            $scope.dataY = dataY;
+
+            // if (humidity.length > 0) {
+            //     $scope.data.humidity.max = Common.arrMaxNum2(humidity) + "%";
+            //     $scope.data.humidity.min = Common.arrMinNum2(humidity) + "%";
+            //     $scope.data.humidity.avg = Common.arrAverageNum2(humidity) + "%";
+            // }
+
+            // 温度
+            var tDataX = [];
+            var tDataY = [];
+            var temperature = [];
+            var unTemperature = 0;
+            var temperatureTotal = 0;
+            var tDataX = [];
+            var tDataY = [];
+            for (var j = 0; j < $scope.info.records.length; j++) {
+                var item = $scope.info.records[j];
+                // if (item.temperature && item.avgTemperature) {
+                if(item.temperature<0||item.temperature>6){
+                    tDataX.push(item.recordAt1);
+                    tDataY.push(item.temperature);
+                    unTemperature++;
+                    temperatureTotal++;
+                }else if(item.temperature&&j%sizeInt==0)
+                {
+
+                    tDataX.push(item.recordAt1);
+                    tDataY.push(item.temperature);
+                    temperatureTotal++;
+                    //tData.push({y: item.recordAt, x: item.temperature,lineColor: "red", markerType: "circle" })
+                }
+                temperature.push(parseFloat(item.temperature));
+            }
+
+
+            $scope.tDataX = tDataX;
+            $scope.tDataY = tDataY;
+            $scope.unTemperature = unTemperature;
+            $scope.temperatureTotal = temperatureTotal;
+
             if (humidity.length > 0) {
                 $scope.data.humidity.max = Common.arrMaxNum2(humidity) + "%";
                 $scope.data.humidity.min = Common.arrMinNum2(humidity) + "%";
                 $scope.data.humidity.avg = Common.arrAverageNum2(humidity) + "%";
             }
 
-            // 温度
-            var tData = [];
-            var temperature = [];
-            for (var j = 0; j < $scope.info.records.length; j++) {
-                var item = $scope.info.records[j];
-                if (item.temperature) {
-                    temperature.push(parseFloat(item.temperature));
-                    tData.push({y: item.recordAt, a: item.temperature})
-                }
-            }
-            $scope.lineData = tData;
+
             if (temperature.length > 0) {
                 $scope.data.temperature.max = Common.arrMaxNum2(temperature) + "℃";
                 $scope.data.temperature.min = Common.arrMinNum2(temperature) + "℃";
@@ -326,6 +369,7 @@ app.controller('InController', function ($rootScope, $scope, $state, $timeout, $
         };
         $scope.initData = function () {
             $scope.info = Config.baseInfo;
+            console.log($scope.info.records);
 
             if ($scope.info.records.length < 1) {
                 return;
@@ -333,37 +377,82 @@ app.controller('InController', function ($rootScope, $scope, $state, $timeout, $
 
             $scope.getCrashInfo();
 
-            // 湿度
-            var data = [];
+
+
+            var count  = $scope.info.records.length;
+            var lineSize = 40;
+            var sizeInt =1;
             var humidity = [];
-            for (var i = 0; i < $scope.info.records.length; i++) {
-                var temp = $scope.info.records[i];
-                if (temp.humidity) {
-                    humidity.push(parseInt(temp.humidity));
-                    data.push({
-                        y: temp.recordAt,
-                        a: temp.humidity
-                    })
-                }
+            var dataX = [];
+            var dataY = [];
+            if(count<=lineSize){
+
+            }else{
+                sizeInt = parseInt(count/lineSize)
             }
-            $scope.lineModerationData = data;
+
+            for (var i = 0; i < $scope.info.records.length; i++) {
+                if(i%sizeInt==0) {
+                    var temp = $scope.info.records[i];
+                    if (temp.humidity) {
+
+
+                        dataX.push(temp.recordAt1);
+                        dataY.push(temp.humidity);
+                    }
+                }
+                humidity.push(parseInt(temp.humidity));
+            }
+            $scope.dataX = dataX;
+            $scope.dataY = dataY;
+
+            // if (humidity.length > 0) {
+            //     $scope.data.humidity.max = Common.arrMaxNum2(humidity) + "%";
+            //     $scope.data.humidity.min = Common.arrMinNum2(humidity) + "%";
+            //     $scope.data.humidity.avg = Common.arrAverageNum2(humidity) + "%";
+            // }
+
+            // 温度
+            var tDataX = [];
+            var tDataY = [];
+            var temperature = [];
+            var unTemperature = 0;
+            var temperatureTotal = 0;
+            var tDataX = [];
+            var tDataY = [];
+            for (var j = 0; j < $scope.info.records.length; j++) {
+                var item = $scope.info.records[j];
+                // if (item.temperature && item.avgTemperature) {
+                if(item.temperature<0||item.temperature>6){
+                    tDataX.push(item.recordAt1);
+                    tDataY.push(item.temperature);
+                    unTemperature++;
+                    temperatureTotal++;
+                }else if(item.temperature&&j%sizeInt==0)
+                {
+
+                    tDataX.push(item.recordAt1);
+                    tDataY.push(item.temperature);
+                    temperatureTotal++;
+                    //tData.push({y: item.recordAt, x: item.temperature,lineColor: "red", markerType: "circle" })
+                }
+                temperature.push(parseFloat(item.temperature));
+            }
+
+
+            $scope.tDataX = tDataX;
+            $scope.tDataY = tDataY;
+            $scope.unTemperature = unTemperature;
+            $scope.temperatureTotal = temperatureTotal;
+
+
             if (humidity.length > 0) {
                 $scope.data.humidity.max = Common.arrMaxNum2(humidity) + "%";
                 $scope.data.humidity.min = Common.arrMinNum2(humidity) + "%";
                 $scope.data.humidity.avg = Common.arrAverageNum2(humidity) + "%";
             }
 
-            // 温度
-            var tData = [];
-            var temperature = [];
-            for (var j = 0; j < $scope.info.records.length; j++) {
-                var item = $scope.info.records[j];
-                if (item.temperature) {
-                    temperature.push(parseFloat(item.temperature));
-                    tData.push({y: item.recordAt, a: item.temperature})
-                }
-            }
-            $scope.lineData = tData;
+
             if (temperature.length > 0) {
                 $scope.data.temperature.max = Common.arrMaxNum2(temperature) + "℃";
                 $scope.data.temperature.min = Common.arrMinNum2(temperature) + "℃";
@@ -406,3 +495,164 @@ app.controller('InController', function ($rootScope, $scope, $state, $timeout, $
         };
 
     });
+// controller('FinishDetailController', function ($scope, HttpService, Config, Common) {
+//     $scope.init = function () {
+//         Common.setWechatTitle('转运历史监控信息');
+//     };
+//     $scope.init();
+//
+//     $scope.data = {
+//         pageState: 1,
+//         humidity: {},    // 统计湿度max/min
+//         temperature: {}, // 统计温度max/min
+//         openData: [],
+//         collisionData: [],
+//         crashData: []   //总的crash 数据
+//     };
+//     // morris
+//     $scope.info = {};
+//     $scope.lineModerationData = [];
+//     $scope.lineData = [];
+//     $scope.colors = ["#379DF2", "#F8B513"];
+//     $scope.initDate = function (x) {
+//         var date = new Date(x);
+//         var m = date.getMonth() + 1;
+//         m = m < 10 ? ('0' + m) : m;
+//         var d = date.getDate();
+//         d = d < 10 ? ('0' + d) : d;
+//         var h = date.getHours();
+//         var minute = date.getMinutes();
+//         minute = minute < 10 ? ('0' + minute) : minute;
+//         return m + '-' + d + ' ' + h + ':' + minute;
+//     };
+//
+//     // page data
+//     $scope.getCrashInfo = function () {
+//         var p1 = {
+//             transferid: $scope.info.transferid,
+//             type: "open"
+//         };
+//
+//         HttpService.get("/records2", p1, function (suc) {
+//             $scope.data.openData = suc;
+//             $scope.getCollisionData();
+//         }, function (fail) {
+//
+//         });
+//
+//
+//     };
+//     $scope.getCollisionData = function () {
+//         var p2 = {
+//             transferid: $scope.info.transferid,
+//             type: "collision"
+//         };
+//
+//         HttpService.get("/records2", p2, function (suc) {
+//             // init数组
+//             $scope.data.crashData = [];
+//
+//             $scope.data.collisionData = suc;
+//             var oSize = $scope.data.openData.length;
+//             var cSize = $scope.data.collisionData.length;
+//             if (oSize > 0 || cSize > 0) {
+//                 var size = oSize > cSize ? oSize : cSize;
+//                 for (var i = 0; i < size; i++) {
+//                     $scope.data.crashData.push({
+//                         oInfo: $scope.data.openData[i] ? $scope.data.openData[i] : '--',
+//                         cInfo: $scope.data.collisionData[i] ? $scope.data.collisionData[i] : '--'
+//                     })
+//                 }
+//             } else {
+//                 $scope.data.crashData.push({
+//                     oInfo: '--',
+//                     cInfo: '--'
+//                 })
+//             }
+//
+//         }, function (fail) {
+//
+//         });
+//     };
+//     $scope.initData = function () {
+//         $scope.info = Config.baseInfo;
+//
+//         if ($scope.info.records.length < 1) {
+//             return;
+//         }
+//
+//         $scope.getCrashInfo();
+//
+//         // 湿度
+//         var data = [];
+//         var humidity = [];
+//         for (var i = 0; i < $scope.info.records.length; i++) {
+//             var temp = $scope.info.records[i];
+//             if (temp.humidity) {
+//                 humidity.push(parseInt(temp.humidity));
+//                 data.push({
+//                     y: temp.recordAt,
+//                     a: temp.humidity
+//                 })
+//             }
+//         }
+//         $scope.lineModerationData = data;
+//         if (humidity.length > 0) {
+//             $scope.data.humidity.max = Common.arrMaxNum2(humidity) + "%";
+//             $scope.data.humidity.min = Common.arrMinNum2(humidity) + "%";
+//             $scope.data.humidity.avg = Common.arrAverageNum2(humidity) + "%";
+//         }
+//
+//         // 温度
+//         var tData = [];
+//         var temperature = [];
+//         for (var j = 0; j < $scope.info.records.length; j++) {
+//             var item = $scope.info.records[j];
+//             if (item.temperature) {
+//                 temperature.push(parseFloat(item.temperature));
+//                 tData.push({y: item.recordAt, a: item.temperature})
+//             }
+//         }
+//         $scope.lineData = tData;
+//         if (temperature.length > 0) {
+//             $scope.data.temperature.max = Common.arrMaxNum2(temperature) + "℃";
+//             $scope.data.temperature.min = Common.arrMinNum2(temperature) + "℃";
+//         }
+//
+//         // 开始时间
+//         $scope.info.startAtShow = moment($scope.info.startAt).format('MM-DD HH:mm');
+//         // 获取器官时间
+//         $scope.info.getOrganAtShow = moment($scope.info.getOrganAt).format('YYYY-MM-DD HH:mm');
+//
+//     };
+//     $scope.initData();
+//
+//     $scope.getShowtime = function (time) {
+//         if (time == '--') {
+//             return '--'
+//         } else {
+//             return moment(time).format('YYYY-MM-DD HH:mm');
+//         }
+//     };
+//
+//     // fullPage
+//     $scope.mainOptions = {
+//         navigation: true,
+//         navigationPosition: 'right',
+//         scrollingSpeed: 1000
+//     };
+//
+//     // click
+//     $scope.viewBaseInfo = function () {
+//         $scope.data.pageState = 1;
+//         $('#base').addClass('btn-active');
+//         $('#trans').removeClass('btn-active');
+//     };
+//
+//     $scope.viewTransInfo = function () {
+//         $scope.data.pageState = 2;
+//         $('#trans').addClass('btn-active');
+//         $('#base').removeClass('btn-active');
+//     };
+//
+// })
