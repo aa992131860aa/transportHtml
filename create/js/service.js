@@ -1,6 +1,6 @@
-// var host = "http://139.196.212.47/transbox/api";
-//var host = "http://www.lifeperfusor.com/transbox/api";
-var host = "http://127.0.0.1:1337/transbox/api";
+
+var host = "http://www.lifeperfusor.com/transbox/api";
+//var host = "http://127.0.0.1:1337/transbox/api";
 app.factory("HttpService", function ($http, $rootScope) {
 
     return {
